@@ -1,14 +1,8 @@
+import * as ts from 'typescript';
 // we do not have types for javascript-natural-sort
 //@ts-ignore
 import naturalSort from 'javascript-natural-sort';
 import { compact, isEqual, pull, clone } from 'lodash';
-
-import {
-    ImportDeclaration,
-    ExpressionStatement,
-    addComments,
-    removeComments,
-} from '@babel/types';
 
 import { isSimilarTextExistInArray } from './is-similar-text-in-array';
 import { PrettierOptions } from '../types';
@@ -22,27 +16,35 @@ import { newLineNode } from '../constants';
  * @param importOrderSeparation boolean indicating if newline should be inserted after each import order
  */
 export const getSortedNodes = (
-    nodes: ImportDeclaration[],
+    nodes: ts.ImportDeclaration[],
     order: PrettierOptions['importOrder'],
     importOrderSeparation: boolean,
 ) => {
     const originalNodes = nodes.map(clone);
     const newLine =
         importOrderSeparation && nodes.length > 1 ? newLineNode : null;
+
     const sortedNodesByImportOrder = order.reduce(
         (
-            res: (ImportDeclaration | ExpressionStatement)[],
+            res: (ts.ImportDeclaration | ts.ExpressionStatement)[],
             val,
-        ): (ImportDeclaration | ExpressionStatement)[] => {
+        ): (ts.ImportDeclaration | ts.ExpressionStatement)[] => {
             const x = originalNodes.filter(
-                (node) => node.source.value.match(new RegExp(val)) !== null,
+                (node) =>
+                    node.moduleSpecifier.getText().match(new RegExp(val)) !==
+                    null,
             );
 
             // remove "found" imports from the list of nodes
             pull(originalNodes, ...x);
 
             if (x.length > 0) {
-                x.sort((a, b) => naturalSort(a.source.value, b.source.value));
+                x.sort((a, b) =>
+                    naturalSort(
+                        a.moduleSpecifier.getText(),
+                        b.moduleSpecifier.getText(),
+                    ),
+                );
 
                 if (res.length > 0) {
                     return compact([...res, newLine, ...x]);
@@ -55,11 +57,12 @@ export const getSortedNodes = (
     );
 
     const sortedNodesNotInImportOrder = originalNodes.filter(
-        (node) => !isSimilarTextExistInArray(order, node.source.value),
+        (node) =>
+            !isSimilarTextExistInArray(order, node.moduleSpecifier.getText()),
     );
 
     sortedNodesNotInImportOrder.sort((a, b) =>
-        naturalSort(a.source.value, b.source.value),
+        naturalSort(a.moduleSpecifier.getText(), b.moduleSpecifier.getText()),
     );
 
     const shouldAddNewLineInBetween =
@@ -75,25 +78,26 @@ export const getSortedNodes = (
     // maintain a copy of the nodes to extract comments from
     const sortedNodesClone = allSortedNodes.map(clone);
 
-    const firstNodesComments = nodes[0].leadingComments;
-
-    // Remove all comments from sorted nodes
-    allSortedNodes.forEach(removeComments);
-
-    // insert comments other than the first comments
-    allSortedNodes.forEach((node, index) => {
-        if (!isEqual(nodes[0].loc, node.loc)) {
-            addComments(
-                node,
-                'leading',
-                sortedNodesClone[index].leadingComments || [],
-            );
-        }
-    });
-
-    if (firstNodesComments) {
-        addComments(allSortedNodes[0], 'leading', firstNodesComments);
-    }
+    // TODO: Fix comments
+    // const firstNodesComments = nodes[0].getLe;
+    //
+    // // Remove all comments from sorted nodes
+    // allSortedNodes.forEach(removeComments);
+    //
+    // // insert comments other than the first comments
+    // allSortedNodes.forEach((node, index) => {
+    //     if (!isEqual(nodes[0].loc, node.loc)) {
+    //         addComments(
+    //             node,
+    //             'leading',
+    //             sortedNodesClone[index].leadingComments || [],
+    //         );
+    //     }
+    // });
+    //
+    // if (firstNodesComments) {
+    //     addComments(allSortedNodes[0], 'leading', firstNodesComments);
+    // }
 
     return allSortedNodes;
 };

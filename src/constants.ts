@@ -1,5 +1,4 @@
-import { ParserPlugin } from '@babel/parser';
-import { expressionStatement, stringLiteral } from '@babel/types';
+import * as ts from 'typescript';
 
 export const flow: ParserPlugin = 'flow';
 export const typescript: ParserPlugin = 'typescript';
@@ -12,6 +11,6 @@ export const newLineCharacters = '\n\n';
 const PRETTIER_PLUGIN_SORT_IMPORTS_NEW_LINE =
     'PRETTIER_PLUGIN_SORT_IMPORTS_NEW_LINE';
 
-export const newLineNode = expressionStatement(
-    stringLiteral(PRETTIER_PLUGIN_SORT_IMPORTS_NEW_LINE),
+export const newLineNode = ts.factory.createExpressionStatement(
+    ts.factory.createStringLiteral(PRETTIER_PLUGIN_SORT_IMPORTS_NEW_LINE),
 );

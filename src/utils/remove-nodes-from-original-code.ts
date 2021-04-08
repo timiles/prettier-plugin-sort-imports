@@ -1,10 +1,4 @@
-import {
-    ImportDeclaration,
-    Statement,
-    CommentBlock,
-    CommentLine,
-    InterpreterDirective,
-} from '@babel/types';
+import * as ts from 'typescript';
 
 /**
  * Removes imports from original file
@@ -13,17 +7,11 @@ import {
  */
 export const removeNodesFromOriginalCode = (
     code: string,
-    nodes: (
-        | Statement
-        | CommentBlock
-        | CommentLine
-        | ImportDeclaration
-        | InterpreterDirective
-    )[],
+    nodes: (ts.ImportDeclaration | ts.ExpressionStatement)[],
 ) => {
     let text = code;
     for (const node of nodes) {
-        const start = Number(node.start);
+        const start = Number(node.pos);
         const end = Number(node.end);
         if (Number.isSafeInteger(start) && Number.isSafeInteger(end)) {
             text = text.replace(code.substring(start, end), '');

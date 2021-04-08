@@ -1,5 +1,6 @@
-import generate from '@babel/generator';
-import { file, Statement, InterpreterDirective } from '@babel/types';
+// import generate from '@babel/generator';
+// import { file, Statement, InterpreterDirective } from '@babel/types';
+import * as ts from 'typescript';
 
 import { getAllCommentsFromNodes } from './get-all-comments-from-nodes';
 import { removeNodesFromOriginalCode } from './remove-nodes-from-original-code';
@@ -11,16 +12,16 @@ import { newLineCharacters } from '../constants';
  * @param originalCode
  */
 export const getCodeFromAst = (
-    nodes: Statement[],
+    nodes: (ts.ImportDeclaration | ts.ExpressionStatement)[],
     originalCode: string,
-    interpreter?: InterpreterDirective | null,
+    // interpreter?: InterpreterDirective | null,
 ) => {
-    const allCommentsFromImports = getAllCommentsFromNodes(nodes);
+    // const allCommentsFromImports = getAllCommentsFromNodes(nodes);
 
     const nodesToRemoveFromCode = [
         ...nodes,
-        ...allCommentsFromImports,
-        ...(interpreter ? [interpreter] : []),
+        // ...allCommentsFromImports,
+        // ...(interpreter ? [interpreter] : []),
     ];
 
     const codeWithoutImportsAndInterpreter = removeNodesFromOriginalCode(
