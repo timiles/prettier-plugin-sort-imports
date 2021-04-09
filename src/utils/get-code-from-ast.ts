@@ -30,11 +30,11 @@ export const getCodeFromAst = (
     );
 
     const printer = ts.createPrinter();
+    const nodeArray = ts.factory.createNodeArray(nodes);
 
     const result = printer.printList(
         ts.ListFormat.PreserveLines,
-        // @ts-ignore
-        nodes,
+        nodeArray,
         sourceFile,
     );
 

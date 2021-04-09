@@ -23,17 +23,17 @@ export const getSortedNodes = (
     const originalNodes = nodes.map(clone);
     // const newLine =
     //     importOrderSeparation && nodes.length > 1 ? newLineNode : null;
-debugger;
+    debugger;
     const sortedNodesByImportOrder = order.reduce(
         (
-            res: ts.ImportDeclaration[],
+            res: (ts.ImportDeclaration | ts.ExpressionStatement)[],
             val,
-        ): ts.ImportDeclaration[] => {
+        ): (ts.ImportDeclaration | ts.ExpressionStatement)[] => {
             debugger;
             const x = originalNodes.filter(
                 (node) =>
-                    node.moduleSpecifier.text.match(new RegExp(val)) !==
-                    null,
+                    ts.isStringLiteral(node.moduleSpecifier) &&
+                    node.moduleSpecifier.text.match(new RegExp(val)) !== null,
             );
 
             // remove "found" imports from the list of nodes
@@ -62,11 +62,15 @@ debugger;
 
     const sortedNodesNotInImportOrder = originalNodes.filter(
         (node) =>
+            ts.isStringLiteral(node.moduleSpecifier) &&
             !isSimilarTextExistInArray(order, node.moduleSpecifier.text),
     );
 
-    sortedNodesNotInImportOrder.sort((a, b) =>
-        naturalSort(a.moduleSpecifier.text, b.moduleSpecifier.text),
+    sortedNodesNotInImportOrder.sort(
+        (a, b) =>
+            ts.isStringLiteral(a.moduleSpecifier) &&
+            ts.isStringLiteral(b.moduleSpecifier) &&
+            naturalSort(a.moduleSpecifier.text, b.moduleSpecifier.text),
     );
 
     const shouldAddNewLineInBetween =
