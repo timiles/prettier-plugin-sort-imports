@@ -34,5 +34,5 @@ export function preprocessor(code: string, options: PrettierOptions) {
         importOrderSeparation,
     );
 
-    return getCodeFromAst(allImports, code /*interpreter*/);
+    return getCodeFromAst(allImports, code, sourceFile);
 }

@@ -1,4 +1,4 @@
-import { isSimilarTextExistInArray } from '../is-similar-text-in-array';
+import { isSimilarTextExistInArray } from '../src/utils/is-similar-text-in-array';
 
 const list = ['a', 'b', 'c', 'd'];
 test('it should return true when text exists in the list', () => {

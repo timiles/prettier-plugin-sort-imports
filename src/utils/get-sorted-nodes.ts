@@ -21,17 +21,18 @@ export const getSortedNodes = (
     importOrderSeparation: boolean,
 ) => {
     const originalNodes = nodes.map(clone);
-    const newLine =
-        importOrderSeparation && nodes.length > 1 ? newLineNode : null;
-
+    // const newLine =
+    //     importOrderSeparation && nodes.length > 1 ? newLineNode : null;
+debugger;
     const sortedNodesByImportOrder = order.reduce(
         (
-            res: (ts.ImportDeclaration | ts.ExpressionStatement)[],
+            res: ts.ImportDeclaration[],
             val,
-        ): (ts.ImportDeclaration | ts.ExpressionStatement)[] => {
+        ): ts.ImportDeclaration[] => {
+            debugger;
             const x = originalNodes.filter(
                 (node) =>
-                    node.moduleSpecifier.getText().match(new RegExp(val)) !==
+                    node.moduleSpecifier.text.match(new RegExp(val)) !==
                     null,
             );
 
@@ -41,13 +42,16 @@ export const getSortedNodes = (
             if (x.length > 0) {
                 x.sort((a, b) =>
                     naturalSort(
-                        a.moduleSpecifier.getText(),
-                        b.moduleSpecifier.getText(),
+                        // @ts-ignore
+                        a.moduleSpecifier.text,
+                        // @ts-ignore
+                        b.moduleSpecifier.text,
                     ),
                 );
 
                 if (res.length > 0) {
-                    return compact([...res, newLine, ...x]);
+                    // return compact([...res, newLine, ...x]);
+                    return compact([...res, ...x]);
                 }
                 return x;
             }
@@ -58,11 +62,11 @@ export const getSortedNodes = (
 
     const sortedNodesNotInImportOrder = originalNodes.filter(
         (node) =>
-            !isSimilarTextExistInArray(order, node.moduleSpecifier.getText()),
+            !isSimilarTextExistInArray(order, node.moduleSpecifier.text),
     );
 
     sortedNodesNotInImportOrder.sort((a, b) =>
-        naturalSort(a.moduleSpecifier.getText(), b.moduleSpecifier.getText()),
+        naturalSort(a.moduleSpecifier.text, b.moduleSpecifier.text),
     );
 
     const shouldAddNewLineInBetween =
@@ -76,7 +80,7 @@ export const getSortedNodes = (
     ]);
 
     // maintain a copy of the nodes to extract comments from
-    const sortedNodesClone = allSortedNodes.map(clone);
+    // const sortedNodesClone = allSortedNodes.map(clone);
 
     // TODO: Fix comments
     // const firstNodesComments = nodes[0].getLe;

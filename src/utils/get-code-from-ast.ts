@@ -2,7 +2,7 @@
 // import { file, Statement, InterpreterDirective } from '@babel/types';
 import * as ts from 'typescript';
 
-import { getAllCommentsFromNodes } from './get-all-comments-from-nodes';
+// import { getAllCommentsFromNodes } from './get-all-comments-from-nodes';
 import { removeNodesFromOriginalCode } from './remove-nodes-from-original-code';
 import { newLineCharacters } from '../constants';
 
@@ -14,7 +14,7 @@ import { newLineCharacters } from '../constants';
 export const getCodeFromAst = (
     nodes: (ts.ImportDeclaration | ts.ExpressionStatement)[],
     originalCode: string,
-    // interpreter?: InterpreterDirective | null,
+    sourceFile: ts.SourceFile,
 ) => {
     // const allCommentsFromImports = getAllCommentsFromNodes(nodes);
 
@@ -29,28 +29,37 @@ export const getCodeFromAst = (
         nodesToRemoveFromCode,
     );
 
-    const newAST = file({
-        type: 'Program',
-        body: nodes,
-        directives: [],
-        sourceType: 'module',
-        interpreter: interpreter,
-        sourceFile: '',
-        leadingComments: [],
-        innerComments: [],
-        trailingComments: [],
-        start: 0,
-        end: 0,
-        loc: {
-            start: { line: 0, column: 0 },
-            end: { line: 0, column: 0 },
-        },
-    });
+    const printer = ts.createPrinter();
 
-    const { code } = generate(newAST);
+    const result = printer.printList(
+        ts.ListFormat.PreserveLines,
+        // @ts-ignore
+        nodes,
+        sourceFile,
+    );
+
+    // const newAST = file({
+    //     type: 'Program',
+    //     body: nodes,
+    //     directives: [],
+    //     sourceType: 'module',
+    //     interpreter: interpreter,
+    //     sourceFile: '',
+    //     leadingComments: [],
+    //     innerComments: [],
+    //     trailingComments: [],
+    //     start: 0,
+    //     end: 0,
+    //     loc: {
+    //         start: { line: 0, column: 0 },
+    //         end: { line: 0, column: 0 },
+    //     },
+    // });
+
+    // const { code } = generate(newAST);
 
     return (
-        code.replace(
+        result.replace(
             /"PRETTIER_PLUGIN_SORT_IMPORTS_NEW_LINE";/gi,
             newLineCharacters,
         ) + codeWithoutImportsAndInterpreter.trim()

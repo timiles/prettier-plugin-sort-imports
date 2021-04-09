@@ -2,9 +2,8 @@ import { format } from 'prettier';
 import { parse as babelParser, ParserOptions } from '@babel/parser';
 import traverse, { NodePath } from '@babel/traverse';
 import { ImportDeclaration, isTSModuleDeclaration } from '@babel/types';
-import { getAllCommentsFromNodes } from '../get-all-comments-from-nodes';
-import { getSortedNodes } from '../get-sorted-nodes';
-import { removeNodesFromOriginalCode } from '../remove-nodes-from-original-code';
+import { getCodeFromAst } from '../src/utils/get-code-from-ast';
+import { getSortedNodes } from '../src/utils/get-sorted-nodes';
 
 const getImportNodes = (code: string, options?: ParserOptions) => {
     const importNodes: ImportDeclaration[] = [];
@@ -27,7 +26,8 @@ const getImportNodes = (code: string, options?: ParserOptions) => {
     return importNodes;
 };
 
-const code = `// first comment
+test('it sorts imports correctly', () => {
+    const code = `// first comment
 // second comment
 import z from 'z';
 import c from 'c';
@@ -36,20 +36,18 @@ import t from 't';
 import k from 'k';
 import a from 'a';
 `;
-
-test('it should remove nodes from the original code', () => {
     const importNodes = getImportNodes(code);
     const sortedNodes = getSortedNodes(importNodes, [], false);
-    const allCommentsFromImports = getAllCommentsFromNodes(sortedNodes);
-
-    const commentAndImportsToRemoveFromCode = [
-        ...sortedNodes,
-        ...allCommentsFromImports,
-    ];
-    const codeWithoutImportDeclarations = removeNodesFromOriginalCode(
-        code,
-        commentAndImportsToRemoveFromCode,
+    const formatted = getCodeFromAst(sortedNodes, code, null);
+    expect(format(formatted, { parser: 'babel' })).toEqual(
+        `// first comment
+// second comment
+import a from "a";
+import c from "c";
+import g from "g";
+import k from "k";
+import t from "t";
+import z from "z";
+`,
     );
-    const result = format(codeWithoutImportDeclarations, { parser: 'babel' });
-    expect(result).toEqual('');
 });

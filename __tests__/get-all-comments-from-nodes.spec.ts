@@ -6,8 +6,8 @@ import {
     CommentBlock,
     CommentLine,
 } from '@babel/types';
-import { getAllCommentsFromNodes } from '../get-all-comments-from-nodes';
-import { getSortedNodes } from '../get-sorted-nodes';
+import { getAllCommentsFromNodes } from '../src/utils/get-all-comments-from-nodes';
+import { getSortedNodes } from '../src/utils/get-sorted-nodes';
 
 const getSortedImportNodes = (code: string, options?: ParserOptions) => {
     const importNodes: ImportDeclaration[] = [];

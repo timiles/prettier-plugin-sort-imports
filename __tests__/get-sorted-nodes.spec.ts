@@ -1,7 +1,7 @@
 import { parse as babelParser, ParserOptions } from '@babel/parser';
 import traverse, { NodePath } from '@babel/traverse';
 import { ImportDeclaration, isTSModuleDeclaration } from '@babel/types';
-import { getSortedNodes } from '../get-sorted-nodes';
+import { getSortedNodes } from '../src/utils/get-sorted-nodes';
 
 const code = `// first comment
 // second comment
