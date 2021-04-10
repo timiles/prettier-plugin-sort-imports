@@ -8,3 +8,5 @@ const PRETTIER_PLUGIN_SORT_IMPORTS_NEW_LINE =
 export const newLineNode = ts.factory.createExpressionStatement(
     ts.factory.createStringLiteral(PRETTIER_PLUGIN_SORT_IMPORTS_NEW_LINE),
 );
+
+export const shebangRegex: RegExp = /^#!(.*)/;

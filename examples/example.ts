@@ -1,20 +1,19 @@
-import threeLevelRelativePath from '../../../threeLevelRelativePath';
-import sameLevelRelativePath from './sameLevelRelativePath';
-import thirdParty from 'third-party';
-export { random } from './random';
-import c from 'c';
-import oneLevelRelativePath from '../oneLevelRelativePath';
-import otherthing from '@core/otherthing';
-import a from 'a';
-import twoLevelRelativePath from '../../twoLevelRelativePath';
-import component from '@ui/hello';
-export default {
-    title: 'hello',
-};
-import fourLevelRelativePath from '../../../../fourLevelRelativePath';
-import something from '@server/something';
-import x from 'x';
+// This example support/index.js is processed and
+// loaded automatically before your test files.
+//
+// This is a great place to put global configuration and
+// behavior that modifies Cypress.
+//
+// You can change the location of this file or turn off
+// automatically serving support files with the
+// 'supportFile' configuration option.
+//
+// You can read more here:
+// https://on.cypress.io/configuration
+// ***********************************************************
 
-function add(a: number, b: number) {
-    return a + b;
-}
+// Import commands.js using ES2015 syntax:
+import './commands';
+
+// Alternatively you can use CommonJS syntax:
+// require('./commands')

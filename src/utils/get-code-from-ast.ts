@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { removeNodesFromOriginalCode } from './remove-nodes-from-original-code';
-import { newLineCharacters } from '../constants';
+import { newLineCharacters, shebangRegex } from '../constants';
 
 /**
  * This function generate a code string from the passed nodes.
@@ -12,12 +12,8 @@ export const getCodeFromAst = (
     originalCode: string,
     sourceFile: ts.SourceFile,
 ) => {
-    const regex: RegExp = /^#!(.*)/;
-
-    const shebang = regex.exec(originalCode);
-
+    const shebang = shebangRegex.exec(originalCode);
     const nodesToRemoveFromCode = [...nodes];
-
     const codeWithoutImportsAndInterpreter = removeNodesFromOriginalCode(
         originalCode,
         nodesToRemoveFromCode,
