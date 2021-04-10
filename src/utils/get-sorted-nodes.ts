@@ -21,8 +21,8 @@ export const getSortedNodes = (
     importOrderSeparation: boolean,
 ) => {
     const originalNodes = nodes.map(clone);
-    // const newLine =
-    //     importOrderSeparation && nodes.length > 1 ? newLineNode : null;
+    const newLine =
+        importOrderSeparation && nodes.length > 1 ? newLineNode : null;
     debugger;
     const sortedNodesByImportOrder = order.reduce(
         (
@@ -50,8 +50,7 @@ export const getSortedNodes = (
                 );
 
                 if (res.length > 0) {
-                    // return compact([...res, newLine, ...x]);
-                    return compact([...res, ...x]);
+                    return compact([...res, newLine, ...x]);
                 }
                 return x;
             }
