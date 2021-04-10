@@ -1,8 +1,4 @@
-// import generate from '@babel/generator';
-// import { file, Statement, InterpreterDirective } from '@babel/types';
 import * as ts from 'typescript';
-
-// import { getAllCommentsFromNodes } from './get-all-comments-from-nodes';
 import { removeNodesFromOriginalCode } from './remove-nodes-from-original-code';
 import { newLineCharacters } from '../constants';
 
@@ -16,13 +12,11 @@ export const getCodeFromAst = (
     originalCode: string,
     sourceFile: ts.SourceFile,
 ) => {
-    // const allCommentsFromImports = getAllCommentsFromNodes(nodes);
+    const regex: RegExp = /^#!(.*)/;
 
-    const nodesToRemoveFromCode = [
-        ...nodes,
-        // ...allCommentsFromImports,
-        // ...(interpreter ? [interpreter] : []),
-    ];
+    const shebang = regex.exec(originalCode);
+
+    const nodesToRemoveFromCode = [...nodes];
 
     const codeWithoutImportsAndInterpreter = removeNodesFromOriginalCode(
         originalCode,
@@ -38,30 +32,16 @@ export const getCodeFromAst = (
         sourceFile,
     );
 
-    // const newAST = file({
-    //     type: 'Program',
-    //     body: nodes,
-    //     directives: [],
-    //     sourceType: 'module',
-    //     interpreter: interpreter,
-    //     sourceFile: '',
-    //     leadingComments: [],
-    //     innerComments: [],
-    //     trailingComments: [],
-    //     start: 0,
-    //     end: 0,
-    //     loc: {
-    //         start: { line: 0, column: 0 },
-    //         end: { line: 0, column: 0 },
-    //     },
-    // });
-
-    // const { code } = generate(newAST);
+    // TODO: clean up
+    const interpreterDirective =
+        (shebang && shebang[0] && `${shebang[0]}\n`) || '';
 
     return (
+        interpreterDirective +
         result.replace(
             /"PRETTIER_PLUGIN_SORT_IMPORTS_NEW_LINE";/gi,
             newLineCharacters,
-        ) + codeWithoutImportsAndInterpreter.trim()
+        ) +
+        codeWithoutImportsAndInterpreter.trim()
     );
 };
